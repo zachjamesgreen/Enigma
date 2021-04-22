@@ -2,7 +2,7 @@ require './lib/enigma'
 
 RSpec.describe Enigma do
   let(:enigma) { Enigma.new }
-  it 'should exist' { expect(enigma).to be_instance_of(Enigma) }
+  it('should exist') { expect(enigma).to be_instance_of(Enigma) }
 
   it 'should #encrypt' do
     encrypted = enigma.encrypt("hello world", "02715", "040895")
