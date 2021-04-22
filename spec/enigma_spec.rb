@@ -14,18 +14,20 @@ RSpec.describe Enigma do
     expect(encrypted).to eq({encryption: "keder ohulw", key: "02715", date: "040895"})
   end
 
-  it 'should #encrypt using todays date' do
+  xit 'should #encrypt using todays date' do
     encrypted = enigma.encrypt("hello world", "02715")
-    expect(encrypted).to eq({encryption: "keder ohulw", key: "02715", date: "040895"})
+
+    expect(encrypted).to eq({encryption: "keder ohulw", key: "02715", date: Date.today.strftime '%d%m%y'})
   end
 
-  it 'should #decrypt using todays date' do
+  xit 'should #decrypt using todays date' do
     encrypted = enigma.decrypt("hello world", "02715")
-    expect(encrypted).to eq({encryption: "keder ohulw", key: "02715", date: "040895"})
+    expect(encrypted).to eq({encryption: "keder ohulw", key: "02715", date: Date.today.strftime '%d%m%y'})
   end
 
-  it 'should #encrypt using todays date and a random key' do
+  xit 'should #encrypt using todays date and a random key' do
+    allow(enigma).to receive(generate_key) { '70361' }
     encrypted = enigma.encrypt("hello world")
-    expect(encrypted).to eq({encryption: "keder ohulw", key: "02715", date: "040895"})
+    expect(encrypted).to eq({encryption: "keder ohulw", key: '70361', date: Date.today.strftime '%d%m%y'})
   end
 end
