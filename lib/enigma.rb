@@ -8,10 +8,10 @@ class Enigma
   def encrypt(message, key = nil, date = nil)
     key = generate_key if key == nil
     date = formatted_date if date == nil
-    message_array = message.split('')
+    message_array = message.split('').map { |m| m.downcase }
     combined = []
-    offsets = (date.to_i ** 2).to_s.split('')[-4..-1].map { |d| d.to_i }
-    keys = key.split('').each_cons(2).map { |g| g.join.to_i }
+    offsets = get_offsets(date)
+    keys = get_keys(key)
     offsets.size.times do |i|
       combined << offsets[i] + keys[i]
     end
@@ -22,7 +22,22 @@ class Enigma
     {encryption: encryption.join, key: key, date: date}
   end
 
-  def decrypt(ciphertext, key, date = Date.today); end
+  def decrypt(ciphertext, key = nil, date = nil)
+    key = generate_key if key == nil
+    date = formatted_date if date == nil
+    ciphertext_array = ciphertext.split('').map { |m| m.downcase }
+    combined = []
+    offsets = get_offsets(date)
+    keys = get_keys(key)
+    offsets.size.times do |i|
+      combined << offsets[i] + keys[i]
+    end
+    decryption = []
+    ciphertext_array.size.times do |i|
+      decryption << Enigma::LEGEND[(Enigma::LEGEND.index(ciphertext_array[i])-combined[i % 4]) % 27]
+    end
+    {decryption: decryption.join, key: key, date: date}
+  end
 
   def generate_key
     rand = Random.rand 100000
@@ -35,5 +50,13 @@ class Enigma
 
   def formatted_date
     Date.today.strftime '%d%m%y'
+  end
+
+  def get_offsets(date)
+    (date.to_i ** 2).to_s.split('')[-4..-1].map { |d| d.to_i }
+  end
+
+  def get_keys(key)
+    key.split('').each_cons(2).map { |k| k.join.to_i }
   end
 end
