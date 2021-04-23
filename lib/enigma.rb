@@ -17,6 +17,10 @@ class Enigma
     end
     encryption = []
     message_array.size.times do |i|
+      if Enigma::LEGEND.index(message_array[i]) == nil
+        encryption << message_array[i]
+        next
+      end
       encryption << Enigma::LEGEND[(Enigma::LEGEND.index(message_array[i])+combined[i % 4]) % 27]
     end
     {encryption: encryption.join, key: key, date: date}
@@ -34,6 +38,10 @@ class Enigma
     end
     decryption = []
     ciphertext_array.size.times do |i|
+      if Enigma::LEGEND.index(ciphertext_array[i]) == nil
+        decryption << ciphertext_array[i]
+        next
+      end
       decryption << Enigma::LEGEND[(Enigma::LEGEND.index(ciphertext_array[i])-combined[i % 4]) % 27]
     end
     {decryption: decryption.join, key: key, date: date}
