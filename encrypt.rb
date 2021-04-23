@@ -10,9 +10,8 @@ encrypted_file_path = ARGV[1]
 
 message_file = File.open(message_file_path, 'rt')
 encrypt = e.encrypt(message_file.read)
-encrypted_file = File.new(encrypted_file_path, 'w')
-encrypted_file.write(encrypt[:encryption])
+File.new(encrypted_file_path, 'w').write(encrypt[:encryption])
 
-puts "Created '#{message_file_path}' with the key #{encrypt[:key]} and date #{encrypt[:date]}"
+puts "Created '#{encrypted_file_path}' with the key #{encrypt[:key]} and date #{encrypt[:date]}"
 
 # binding.pry

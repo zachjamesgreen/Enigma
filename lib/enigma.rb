@@ -65,6 +65,7 @@ class Enigma
   end
 
   def get_keys(key)
+    # check date format to make sure it is correct
     key.split('').each_cons(2).map { |k| k.join.to_i }
   end
 end
