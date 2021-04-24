@@ -1,3 +1,5 @@
 .idea
 coverage
 encrypted.txt
+decrypted.txt
+runner.rb

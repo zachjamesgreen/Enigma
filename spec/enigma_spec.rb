@@ -32,4 +32,13 @@ RSpec.describe Enigma do
     encrypted = enigma.encrypt("hello world")
     expect(encrypted).to eq({encryption: "djytkeiwnqq", key: '70361', date: Date.today.strftime('%d%m%y')})
   end
+
+  it 'should #crack_with_date' do
+    allow(Date).to receive(:today) {Date.new(2021,04,22)}
+    allow(enigma).to receive(:generate_key) { '70361' }
+    encrypted = enigma.encrypt("zachary end")
+    expect(encrypted[:encryption]).to eq('vfppxwkhasq')
+    crack = enigma.crack_with_date(encrypted[:encryption], '230421')
+    expect(crack).to eq('zachary end')
+  end
 end

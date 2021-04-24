@@ -8,7 +8,7 @@ class Enigma
   def encrypt(message, key = nil, date = nil)
     key = generate_key if key == nil
     date = formatted_date if date == nil
-    message_array = message.split('').map { |m| m.downcase }
+    message_array = split_message(message)
     combined = []
     offsets = get_offsets(date)
     keys = get_keys(key)
@@ -29,7 +29,7 @@ class Enigma
   def decrypt(ciphertext, key = nil, date = nil)
     key = generate_key if key == nil
     date = formatted_date if date == nil
-    ciphertext_array = ciphertext.split('').map { |m| m.downcase }
+    ciphertext_array = split_message(ciphertext)
     combined = []
     offsets = get_offsets(date)
     keys = get_keys(key)
@@ -46,6 +46,8 @@ class Enigma
     end
     {decryption: decryption.join, key: key, date: date}
   end
+
+
 
   def generate_key
     rand = Random.rand 100000
@@ -67,5 +69,41 @@ class Enigma
   def get_keys(key)
     # check date format to make sure it is correct
     key.split('').each_cons(2).map { |k| k.join.to_i }
+  end
+
+  def split_message(message)
+    return message if message.class == Array
+
+    message.split('').map { |m| m.downcase }
+  end
+
+  def crack_with_date(message, date)
+    message_array = split_message(message)
+    offsets = get_offsets(date)
+    code = decrypt_end(message[-4..-1], offsets, message_array)
+    decrypt = []
+    message_array.size.times do |i|
+      decrypt << decrypt_single_char(message_array[i], code[i % 4])
+    end
+    decrypt.join
+  end
+
+  def decrypt_single_char(enc_char, offset)
+    index = Enigma::LEGEND.index(enc_char)
+    Enigma::LEGEND[(index + (offset) * -1) % 27]
+  end
+
+  def decrypt_end(end_array, offsets, message_array)
+    end_letters_array = [' ', 'e', 'n', 'd']
+    start_point = message_array.size % 4
+    array = []
+    a = {}
+    4.times do |i|
+      distance = (Enigma::LEGEND.index(end_array[i]) - Enigma::LEGEND.index(end_letters_array[i]))
+      s = (start_point+i)%4
+      array << (distance % 27) - offsets[s]
+      a[(start_point+i)%4] = distance
+    end
+    a
   end
 end
