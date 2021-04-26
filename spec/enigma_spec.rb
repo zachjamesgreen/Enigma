@@ -38,7 +38,7 @@ RSpec.describe Enigma do
     allow(enigma).to receive(:generate_key) { '70361' }
     encrypted = enigma.encrypt("zachary end")
     expect(encrypted[:encryption]).to eq('vfppxwkhasq')
-    crack = enigma.crack_with_date(encrypted[:encryption], '230421')
+    crack = enigma.crack(encrypted[:encryption], '230421')
     expect(crack).to eq('zachary end')
   end
 end

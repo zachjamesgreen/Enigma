@@ -6,55 +6,41 @@ class Enigma
   def initialize; end
 
   def encrypt(message, key = nil, date = nil)
-    key = generate_key if key == nil
-    date = formatted_date if date == nil
-    message_array = split_message(message)
-    combined = []
-    offsets = get_offsets(date)
-    keys = get_keys(key)
-    offsets.size.times do |i|
-      combined << offsets[i] + keys[i]
-    end
-    encryption = []
-    message_array.size.times do |i|
-      if Enigma::LEGEND.index(message_array[i]) == nil
-        encryption << message_array[i]
-        next
-      end
-      encryption << Enigma::LEGEND[(Enigma::LEGEND.index(message_array[i])+combined[i % 4]) % 27]
-    end
+    key = generate_key if key.nil?
+    date = formatted_date if date.nil?
+    transform(split_message(message), combine(date, key))
     {encryption: encryption.join, key: key, date: date}
   end
 
   def decrypt(ciphertext, key = nil, date = nil)
-    key = generate_key if key == nil
-    date = formatted_date if date == nil
-    ciphertext_array = split_message(ciphertext)
-    combined = []
-    offsets = get_offsets(date)
-    keys = get_keys(key)
-    offsets.size.times do |i|
-      combined << offsets[i] + keys[i]
-    end
-    decryption = []
-    ciphertext_array.size.times do |i|
-      if Enigma::LEGEND.index(ciphertext_array[i]) == nil
-        decryption << ciphertext_array[i]
-        next
-      end
-      decryption << Enigma::LEGEND[(Enigma::LEGEND.index(ciphertext_array[i])-combined[i % 4]) % 27]
-    end
+    key = generate_key if key.nil?
+    date = formatted_date if date.nil?
+    decryption = transform(split_message(ciphertext), combine(date, key))
     {decryption: decryption.join, key: key, date: date}
   end
 
+  def combine(date, key)
+    offsets = get_offsets(date)
+    keys = get_keys(key)
+    (0..3).collect do |i|
+      offsets[i] + keys[i]
+    end
+  end
 
+  def transform(text_array, distance_array)
+    (0..(text_array.size - 1)).collect do |i|
+      if Enigma::LEGEND.index(text_array[i]).nil?
+        text_array[i]
+        next
+      end
+      Enigma::LEGEND[(Enigma::LEGEND.index(text_array[i]) - distance_array[i % 4]) % 27]
+    end
+  end
 
   def generate_key
-    rand = Random.rand 100000
+    rand = Random.rand 100_000
     digits = rand.digits
-    until digits.size == 5 do
-      digits.unshift 0
-    end
+    digits.unshift 0 until digits.size == 5
     digits.join('')
   end
 
@@ -63,7 +49,7 @@ class Enigma
   end
 
   def get_offsets(date)
-    (date.to_i ** 2).to_s.split('')[-4..-1].map { |d| d.to_i }
+    (date.to_i**2).to_s.split('')[-4..-1].map(&:to_i)
   end
 
   def get_keys(key)
@@ -72,15 +58,14 @@ class Enigma
   end
 
   def split_message(message)
-    return message if message.class == Array
+    return message if message.instance_of?(Array)
 
-    message.split('').map { |m| m.downcase }
+    message.split('').map(&:downcase)
   end
 
-  def crack_with_date(message, date)
+  def crack(message, date = formatted_date)
     message_array = split_message(message)
-    offsets = get_offsets(date)
-    code = decrypt_end(message[-4..-1], offsets, message_array)
+    code = decrypt_end(message[-4..-1], message_array)
     decrypt = []
     message_array.size.times do |i|
       decrypt << decrypt_single_char(message_array[i], code[i % 4])
@@ -90,19 +75,18 @@ class Enigma
 
   def decrypt_single_char(enc_char, offset)
     index = Enigma::LEGEND.index(enc_char)
-    Enigma::LEGEND[(index + (offset) * -1) % 27]
+    return enc_char if index.nil?
+
+    Enigma::LEGEND[(index + (offset * -1)) % 27]
   end
 
-  def decrypt_end(end_array, offsets, message_array)
+  def decrypt_end(end_array, message_array)
     end_letters_array = [' ', 'e', 'n', 'd']
     start_point = message_array.size % 4
-    array = []
     a = {}
     4.times do |i|
       distance = (Enigma::LEGEND.index(end_array[i]) - Enigma::LEGEND.index(end_letters_array[i]))
-      s = (start_point+i)%4
-      array << (distance % 27) - offsets[s]
-      a[(start_point+i)%4] = distance
+      a[(start_point + i) % 4] = distance
     end
     a
   end

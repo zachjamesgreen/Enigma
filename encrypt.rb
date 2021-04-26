@@ -13,5 +13,3 @@ encrypt = e.encrypt(message_file.read)
 File.new(encrypted_file_path, 'w').write(encrypt[:encryption])
 
 puts "Created '#{encrypted_file_path}' with the key #{encrypt[:key]} and date #{encrypt[:date]}"
-
-# binding.pry
