@@ -20,7 +20,7 @@ RSpec.describe Enigma do
   end
 
   it 'should #decrypt using todays date' do
-    allow(Date).to receive(:today) { Date.new(2021, 0o4, 22) }
+    allow(Date).to receive(:today) { Date.new(2021, 04, 22) }
     encrypted = enigma.decrypt('qgfaxbqd ny', '02715')
     expect(encrypted).to eq({ decryption: 'hello world', key: '02715', date: Date.today.strftime('%d%m%y') })
   end
@@ -33,11 +33,11 @@ RSpec.describe Enigma do
   end
 
   it 'should #crack' do
-    allow(Date).to receive(:today) { Date.new(2021, 0o4, 23) }
+    allow(Date).to receive(:today) { Date.new(2021, 04, 23) }
     allow(enigma).to receive(:generate_key) { '70361' }
     encrypted = enigma.encrypt('zachary end')
     expect(encrypted[:encryption]).to eq('vfppxwkhasq')
-    crack = enigma.crack(encrypted[:encryption], '230421')
+    crack = enigma.crack(encrypted[:encryption])
     expect(crack).to eq('zachary end')
   end
 
