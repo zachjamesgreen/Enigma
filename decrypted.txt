@@ -1,4 +1,20 @@
-zachary
+zachary end
 green
 the quick brown fox jumps over the lazy dog
-there are many variations of passages of lorem ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. if you are going to use a passage of lorem ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. all the lorem ipsum generators on the internet tend to repeat predefined chunks as necessary, making this the first true generator on the internet. it uses a dictionary of over 200 latin words, combined with a handful of model sentence structures, to generate lorem ipsum which looks reasonable. the generated lorem ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+
+!@#$%^&*()_+-=1234567890/\|}{[]?.,<>""'':;
+there are many variations of passages of lorem ipsum available,
+but the majority have suffered alteration in some form,
+by injected humour,
+or randomised words which don't look even slightly believable.
+if you are going to use a passage of lorem ipsum,
+you need to be sure there isn't anything embarrassing hidden in the middle of text.
+all the lorem ipsum generators on the internet tend to repeat predefined chunks as necessary,
+making this the first true generator on the internet.
+it uses a dictionary of over 200 latin words,
+combined with a handful of model sentence structures,
+to generate lorem ipsum which looks reasonable.
+the generated lorem ipsum is therefore always free from repetition,
+injected humour,
+or non-characteristic words etc.
+ end

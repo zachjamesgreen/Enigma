@@ -10,9 +10,7 @@ key = ARGV[2]
 date = ARGV[3]
 
 message_file = File.open(encrypted_file_path, 'rt')
-decrypt = e.decrypt(message_file.read,key,date)
-
-
+decrypt = e.decrypt(message_file.read, key, date)
 
 File.new(decrypted_file_path, 'w').write(decrypt[:decryption])
 

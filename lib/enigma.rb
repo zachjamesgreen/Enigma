@@ -3,24 +3,22 @@ require 'date'
 class Enigma
   LEGEND = ('a'..'z').to_a << ' '
 
-  def initialize; end
-
   def encrypt(message, key = nil, date = nil)
     key = generate_key if key.nil?
     date = formatted_date if date.nil?
     encryption = transform(split_message(message), combine(date, key))
-    {encryption: encryption.join, key: key, date: date}
+    { encryption: encryption.join, key: key, date: date }
   end
 
   def decrypt(ciphertext, key = nil, date = nil)
     key = generate_key if key.nil?
     date = formatted_date if date.nil?
-    neg = combine(date, key).map { |i| i * -1}
+    neg = combine(date, key).map { |i| i * -1 }
     decryption = transform(split_message(ciphertext), neg)
-    {decryption: decryption.join, key: key, date: date}
+    { decryption: decryption.join, key: key, date: date }
   end
 
-  def crack(message, date = formatted_date)
+  def crack(message)
     message_array = split_message(message)
     code = decrypt_end(message[-4..-1], message_array)
     decrypt = []
@@ -57,7 +55,7 @@ class Enigma
   end
 
   def formatted_date
-    Date.today.strftime '%d%m%y'
+    Date.today.strftime('%d%m%y')
   end
 
   def get_offsets(date)
