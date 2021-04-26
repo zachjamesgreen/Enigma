@@ -15,7 +15,6 @@ RSpec.describe Enigma do
   end
 
   it 'should #encrypt using todays date' do
-    allow(Date).to receive(:today) {Date.new(2021,04,22)}
     encrypted = enigma.encrypt("hello world", "02715")
     expect(encrypted).to eq({encryption: "qgfaxbqd ny", key: "02715", date: Date.today.strftime('%d%m%y')})
   end
@@ -33,12 +32,30 @@ RSpec.describe Enigma do
     expect(encrypted).to eq({encryption: "djytkeiwnqq", key: '70361', date: Date.today.strftime('%d%m%y')})
   end
 
-  it 'should #crack_with_date' do
-    allow(Date).to receive(:today) {Date.new(2021,04,22)}
+  it 'should #crack' do
+    allow(Date).to receive(:today) {Date.new(2021,04,23)}
     allow(enigma).to receive(:generate_key) { '70361' }
     encrypted = enigma.encrypt("zachary end")
     expect(encrypted[:encryption]).to eq('vfppxwkhasq')
     crack = enigma.crack(encrypted[:encryption], '230421')
     expect(crack).to eq('zachary end')
+  end
+
+  it 'should encrypt/decrypt the alphabet' do
+    encrypted = enigma.encrypt("the five boxing wizards jump quickly.", "59421", '160891')
+    expect(encrypted).to eq({:encryption=>"abavncr hwksqhcvdcvwzyovroikhkqdkeht.", :key=>"59421", :date=>"160891"})
+    decrypted = enigma.decrypt(encrypted[:encryption], encrypted[:key], encrypted[:date])
+    expect(decrypted).to eq({:decryption=>"the five boxing wizards jump quickly.", :key=>"59421", :date=>"160891"})
+  end
+
+  it 'should generate random key and have padded zeros' do
+    10000.times do |i|
+      encrypted = enigma.encrypt("the five boxing wizards jump quickly.")
+      key = encrypted[:key]
+      if key.include?('0') && key[0] == '0'
+        expect(key.size).to eq(5)
+      end
+
+    end
   end
 end

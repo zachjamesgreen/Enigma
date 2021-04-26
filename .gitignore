@@ -2,4 +2,5 @@
 coverage
 encrypted.txt
 decrypted.txt
+crack.txt
 runner.rb

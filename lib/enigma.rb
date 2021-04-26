@@ -8,16 +8,29 @@ class Enigma
   def encrypt(message, key = nil, date = nil)
     key = generate_key if key.nil?
     date = formatted_date if date.nil?
-    transform(split_message(message), combine(date, key))
+    encryption = transform(split_message(message), combine(date, key))
     {encryption: encryption.join, key: key, date: date}
   end
 
   def decrypt(ciphertext, key = nil, date = nil)
     key = generate_key if key.nil?
     date = formatted_date if date.nil?
-    decryption = transform(split_message(ciphertext), combine(date, key))
+    neg = combine(date, key).map { |i| i * -1}
+    decryption = transform(split_message(ciphertext), neg)
     {decryption: decryption.join, key: key, date: date}
   end
+
+  def crack(message, date = formatted_date)
+    message_array = split_message(message)
+    code = decrypt_end(message[-4..-1], message_array)
+    decrypt = []
+    message_array.size.times do |i|
+      decrypt << decrypt_single_char(message_array[i], code[i % 4])
+    end
+    decrypt.join
+  end
+
+  private
 
   def combine(date, key)
     offsets = get_offsets(date)
@@ -28,20 +41,19 @@ class Enigma
   end
 
   def transform(text_array, distance_array)
-    (0..(text_array.size - 1)).collect do |i|
+    letters = []
+    text_array.size.times do |i|
       if Enigma::LEGEND.index(text_array[i]).nil?
-        text_array[i]
+        letters << text_array[i]
         next
       end
-      Enigma::LEGEND[(Enigma::LEGEND.index(text_array[i]) - distance_array[i % 4]) % 27]
+      letters << Enigma::LEGEND[(Enigma::LEGEND.index(text_array[i]) + distance_array[i % 4]) % 27]
     end
+    letters
   end
 
   def generate_key
-    rand = Random.rand 100_000
-    digits = rand.digits
-    digits.unshift 0 until digits.size == 5
-    digits.join('')
+    Random.rand(100_000).to_s.rjust(5, '0')
   end
 
   def formatted_date
@@ -53,24 +65,13 @@ class Enigma
   end
 
   def get_keys(key)
-    # check date format to make sure it is correct
     key.split('').each_cons(2).map { |k| k.join.to_i }
   end
 
   def split_message(message)
     return message if message.instance_of?(Array)
 
-    message.split('').map(&:downcase)
-  end
-
-  def crack(message, date = formatted_date)
-    message_array = split_message(message)
-    code = decrypt_end(message[-4..-1], message_array)
-    decrypt = []
-    message_array.size.times do |i|
-      decrypt << decrypt_single_char(message_array[i], code[i % 4])
-    end
-    decrypt.join
+    message.downcase.split('')
   end
 
   def decrypt_single_char(enc_char, offset)
@@ -85,8 +86,7 @@ class Enigma
     start_point = message_array.size % 4
     a = {}
     4.times do |i|
-      distance = (Enigma::LEGEND.index(end_array[i]) - Enigma::LEGEND.index(end_letters_array[i]))
-      a[(start_point + i) % 4] = distance
+      a[(start_point + i) % 4] = (Enigma::LEGEND.index(end_array[i]) - Enigma::LEGEND.index(end_letters_array[i]))
     end
     a
   end
