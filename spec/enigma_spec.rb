@@ -26,7 +26,7 @@ RSpec.describe Enigma do
   end
 
   it 'should #encrypt using todays date and a random key' do
-    allow(Date).to receive(:today) { Date.new(2021, 0o4, 22) }
+    allow(Date).to receive(:today) { Date.new(2021, 04, 22) }
     allow(enigma).to receive(:generate_key) { '70361' }
     encrypted = enigma.encrypt('hello world')
     expect(encrypted).to eq({ encryption: 'djytkeiwnqq', key: '70361', date: Date.today.strftime('%d%m%y') })
