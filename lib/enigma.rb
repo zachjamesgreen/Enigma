@@ -18,7 +18,7 @@ class Enigma
     { decryption: decryption.join, key: key, date: date }
   end
 
-  def crack(message)
+  def crack(message, date = formatted_date)
     message_array = split_message(message)
     code = decrypt_end(message[-4..-1], message_array)
     decrypt = []
